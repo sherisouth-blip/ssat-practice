@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SSAT Review Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+:root{
+  --paper:#f6f8fa; --sheet:#ffffff; --ink:#18232e; --muted:#5a6876; --rule:#d9e0e7;
+  --accent:#1f5f8b; --accent-soft:#e3eef6; --mark:#f2c94c; --mark-soft:#fdf4d6;
+  --good:#1e7a4c; --good-soft:#e2f3ea; --bad:#b4372f; --bad-soft:#f9e4e2;
+  --f-display:"Newsreader",Georgia,"Times New Roman",serif;
+  --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#11171d; --sheet:#18212a; --ink:#e6edf3; --muted:#9aa8b5; --rule:#2c3946;
+  --accent:#6fb0de; --accent-soft:#1d3346; --mark:#e0b43a; --mark-soft:#3a3118;
+  --good:#5cc78f; --good-soft:#173527; --bad:#ef7f75; --bad-soft:#3d1f1d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#11171d; --sheet:#18212a; --ink:#e6edf3; --muted:#9aa8b5; --rule:#2c3946;
+  --accent:#6fb0de; --accent-soft:#1d3346; --mark:#e0b43a; --mark-soft:#3a3118;
+  --good:#5cc78f; --good-soft:#173527; --bad:#ef7f75; --bad-soft:#3d1f1d; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding:24px 16px 64px}
+h1{font-family:var(--f-display);font-weight:600;font-size:clamp(1.7rem,4vw,2.3rem);margin:0;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:.92rem}
+.savenote{color:var(--muted);font-size:.9rem;margin:4px 0 14px}
+.exportrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin-bottom:16px}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;border-bottom:2px solid var(--rule);position:sticky;top:0;background:var(--paper);z-index:5}
+.tab{font:600 1rem var(--f-body);background:none;border:0;color:var(--muted);padding:10px 14px;border-bottom:3px solid transparent;margin-bottom:-2px;cursor:pointer}
+.tab[aria-selected="true"]{color:var(--ink);border-color:var(--accent)}
+button:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.btn{font:600 .92rem var(--f-body);padding:8px 14px;border-radius:6px;border:1px solid var(--rule);background:var(--sheet);color:var(--ink);cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn:disabled{opacity:.4;cursor:default}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--sheet)}
+.btn.warn{border-color:var(--bad);color:var(--bad)}
+.part{font-family:var(--f-display);font-size:1.4rem;font-weight:600;margin:30px 0 4px}
+.dir{color:var(--muted);font-size:.95rem;margin:0 0 14px;max-width:68ch}
+.setbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;background:var(--sheet);border:1px solid var(--rule);border-radius:8px;padding:10px 14px;margin-bottom:14px}
+.setbar b{font:700 1.25rem var(--f-mono)}
+.spacer{flex:1}
+
+/* word bank */
+.wb-tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:16px 0}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:8px;padding:14px 16px;text-align:left;color:var(--ink);font:inherit;cursor:default}
+.card .w{font-family:var(--f-display);font-size:1.3rem;font-weight:600;letter-spacing:.04em}
+.card .pos{font-size:.8rem;color:var(--muted);font-style:italic;margin-left:6px}
+.wcard .def,.card .def{font-weight:600;margin:4px 0 6px}
+.wcard .row,.card .row{font-size:.9rem;margin:3px 0;color:var(--ink)}
+.wcard .row span,.card .row span{font:600 .72rem var(--f-body);text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-right:6px}
+.wcard .trap,.card .trap{background:var(--bad-soft);border-radius:4px;padding:2px 6px}
+.quiz .card{cursor:pointer}
+.quiz .card .hid{display:none}
+.quiz .card.open .hid{display:block}
+.quiz .card:not(.open)::after{content:"Tap to reveal";display:block;color:var(--muted);font-size:.85rem;margin-top:6px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--sheet);border:1px solid var(--rule);border-radius:20px;padding:5px 12px;font-size:.92rem}
+.chip b{font-family:var(--f-display);font-size:1.02rem}
+
+/* questions */
+.q{background:var(--sheet);border:1px solid var(--rule);border-radius:8px;padding:16px 18px;margin-bottom:12px}
+.qhead{display:flex;gap:12px;align-items:flex-start}
+.num{font:700 .95rem var(--f-mono);color:var(--accent);min-width:2.2ch;padding-top:2px}
+.stem{flex:1;min-width:0;font-size:1.05rem}
+.stem .word{font-family:var(--f-display);font-size:1.3rem;font-weight:600;letter-spacing:.06em}
+.indent{margin-left:calc(2.2ch + 12px)}
+.opts{display:grid;gap:6px;margin-top:12px}
+.opt{display:flex;gap:12px;align-items:baseline;text-align:left;width:100%;font:400 1rem var(--f-body);color:var(--ink);background:none;border:1.5px solid transparent;border-radius:6px;padding:7px 10px;cursor:pointer}
+.opt:hover{background:var(--accent-soft)}
+.opt .l{font:700 .85rem var(--f-mono);width:26px;height:26px;flex:none;border:1.5px solid var(--muted);border-radius:50%;display:grid;place-items:center;transform:translateY(4px)}
+.opt.right{border-color:var(--good);background:var(--good-soft)}
+.opt.right .l{background:var(--good);border-color:var(--good);color:var(--sheet)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt.wrong .l{background:var(--bad);border-color:var(--bad);color:var(--sheet)}
+.done .opt{cursor:default}.done .opt:hover{background:none}
+.done .opt.right:hover{background:var(--good-soft)}.done .opt.wrong:hover{background:var(--bad-soft)}
+.expl{margin-top:10px;font-size:.95rem;color:var(--muted);border-top:1px solid var(--rule);padding-top:8px}
+.expl strong{color:var(--ink)}
+.mysent{margin-top:12px}
+.mysent label{font:600 .75rem var(--f-body);text-transform:uppercase;letter-spacing:.07em;color:var(--muted);display:block;margin-bottom:4px}
+.mysent input{width:100%;font:400 1rem var(--f-display);padding:8px 10px;border:1px solid var(--rule);border-radius:6px;background:var(--paper);color:var(--ink)}
+
+/* method */
+.lesson{background:var(--sheet);border:1px solid var(--rule);border-radius:8px;padding:16px 20px;margin-bottom:14px}
+.lesson h3{margin:0 0 6px;font-size:1.05rem}
+.lesson p{margin:6px 0;max-width:70ch}
+.formula{font-family:var(--f-display);font-size:1.15rem;background:var(--accent-soft);border-radius:6px;padding:10px 14px;margin:10px 0}
+table.pat{width:100%;border-collapse:collapse;font-size:.95rem;margin-top:8px}
+table.pat th{text-align:left;font:600 .75rem var(--f-body);text-transform:uppercase;letter-spacing:.07em;color:var(--muted);border-bottom:2px solid var(--rule);padding:6px 8px}
+table.pat td{border-bottom:1px solid var(--rule);padding:8px;vertical-align:top}
+table.pat td:first-child{font-weight:600}
+table.pat td.ok{background:var(--good-soft)}
+table.pat td.no{color:var(--muted)}
+.tw{overflow-x:auto}
+.key{font-weight:700;background:var(--mark-soft);border-radius:3px;padding:0 3px}
+ol.check{margin:6px 0 0;padding-left:1.3em}
+ol.check li{margin:5px 0}
+.wcard .def{font-size:1.15rem}
+.step{font:600 .75rem var(--f-body);text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:12px 0 4px}
+.sentopt{display:block;width:100%;text-align:left;font:400 1.05rem var(--f-display);color:var(--ink);background:none;border:1.5px solid var(--rule);border-radius:6px;padding:8px 12px;margin-bottom:6px;cursor:pointer}
+.sentopt:hover{border-color:var(--accent)}
+.sentopt.right{border-color:var(--good);background:var(--good-soft)}
+.sentopt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.was{font-size:.88rem;color:var(--bad);margin-top:2px}
+.passage{background:var(--sheet);border:1px solid var(--rule);border-radius:8px;padding:20px 24px;font-family:var(--f-display);font-size:1.12rem;line-height:1.7}
+.passage p{margin:0 0 .9em;text-indent:1.5em}
+.passage p:first-of-type{text-indent:0}
+.passage.poem p{text-indent:0}
+.passage .src{font-family:var(--f-body);font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:10px}
+.pgroup{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:start;margin-bottom:24px}
+.pgroup .passage{position:sticky;top:56px;max-height:calc(100vh - 76px);overflow:auto}
+@media (max-width:820px){.pgroup{grid-template-columns:minmax(0,1fr)}.pgroup .passage{position:static;max-height:none}}
+footer{margin-top:32px;color:var(--muted);font-size:.82rem}
+#export-fallback textarea{width:100%;min-height:200px;font:.85rem var(--f-mono);padding:10px;border:1px solid var(--rule);border-radius:6px;background:var(--sheet);color:var(--ink)}
+</style></head>
+<body>
+<div class="wrap">
+  <h1>SSAT Upper Level · Review Room</h1>
+  <div class="sub">Vocabulary, analogies and reading, built from your October 14 practice test</div>
+  <p class="savenote">Your work saves automatically in this browser. Reloading the page is safe.</p>
+  <div class="exportrow">
+    <button class="btn primary" id="export">Copy results for Google Docs</button>
+    <span class="sub" id="export-msg">Copies every set’s score, the questions missed, your analogy sentences, and your reading results.</span>
+  </div>
+  <div id="export-fallback" hidden><p class="sub">Copying was blocked here. Select all the text in the box, copy it, and paste it into a Google Doc.</p><textarea id="export-text" readonly></textarea></div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" data-sec="bank">1 · Word Bank</button>
+    <button class="tab" role="tab" data-sec="vocab">2 · Vocabulary Practice</button>
+    <button class="tab" role="tab" data-sec="method">3 · Analogy Method</button>
+    <button class="tab" role="tab" data-sec="ana">4 · Analogy Practice</button>
+    <button class="tab" role="tab" data-sec="read">5 · Reading</button>
+  </div>
+  <section id="sec-bank" data-sec="bank"></section>
+  <section id="sec-vocab" data-sec="vocab" hidden></section>
+  <section id="sec-method" data-sec="method" hidden></section>
+  <section id="sec-ana" data-sec="ana" hidden></section>
+  <section id="sec-read" data-sec="read" hidden></section>
+
+  <footer>Original practice material written in the SSAT Upper Level style. SSAT is a trademark of The Enrollment Management Association, which does not endorse this page.</footer>
+</div>
+
+<script>
+const L="ABCDE";
+
+/* ---------- 1. word bank ---------- */
+const WORDS=[
+ {w:"OBDURATE",p:"adj.",d:"stubborn; refusing to change your mind",h:"dur = hard (durable, endure). An obdurate person has a hardened mind.",t:"gloomy",x:"Despite all the evidence, the obdurate coach refused to change the lineup."},
+ {w:"RECALCITRANT",p:"adj.",d:"defiant; refusing to obey or be controlled",h:"re = back + calc = heel: kicking back with the heels, like a stubborn mule.",t:"generous",x:"The recalcitrant puppy dug in its paws and refused to walk."},
+ {w:"OBSEQUIOUS",p:"adj.",d:"too eager to please or obey; servile",h:"sequ = follow (sequence). An obsequious person follows someone around, agreeing with everything.",t:"defiant (the opposite!)",x:"The obsequious assistant laughed loudly at every one of the boss’s jokes."},
+ {w:"PUSILLANIMOUS",p:"adj.",d:"cowardly; lacking courage",h:"pusill = tiny + anim = spirit: a tiny spirit. Its opposite is magnanimous, a great spirit.",t:"pushy (sound trap)",x:"The pusillanimous knight hid behind the castle wall while the others fought."},
+ {w:"EQUANIMITY",p:"noun",d:"calmness and composure, especially under stress",h:"equ = even + anim = mind: an even, steady mind.",t:"sameness (equ- trap)",x:"She accepted the loss with equanimity, shaking hands and smiling."},
+ {w:"PROPITIOUS",p:"adj.",d:"favourable; likely to lead to success",h:"Pairs with auspicious. A propitious moment is the right moment.",t:"prophetic (sound trap)",x:"Clear skies and a light wind made it a propitious day for the launch."},
+ {w:"VACILLATE",p:"verb",d:"to waver; to go back and forth between choices",h:"Picture a fan oscillating back and forth: vacillate sounds like oscillate.",t:"vacate (sound trap)",x:"He vacillated between the two schools for weeks before choosing."},
+ {w:"CAPRICIOUS",p:"adj.",d:"fickle; changing suddenly, on a whim",h:"A caprice is a sudden whim. Memory trick: a goat capering from rock to rock.",t:"generous",x:"The capricious weather changed from sun to hail three times in an hour."},
+ {w:"INDOLENT",p:"adj.",d:"lazy; avoiding work or effort",h:"in = not + dol = pain: avoiding the pain of effort. You knew dol meant pain or sorrow, but the word today just means lazy.",t:"sorrowful (root trap)",x:"The indolent cat moved only to follow the patch of sunlight across the floor."},
+ {w:"MENDACIOUS",p:"adj.",d:"lying; untruthful",h:"From Latin mendax, liar. Nothing to do with mend. Its opposite is veracious (truthful).",t:"stubborn",x:"The mendacious salesman swore the car had never been in an accident."},
+ {w:"ENERVATE",p:"verb",d:"to weaken; to drain someone’s energy",h:"e = out + nerv = nerve, strength: to take the strength out. It looks like energize but means the opposite.",t:"organize",x:"Three hours of humid heat enervated the whole team."},
+ {w:"CORPULENT",p:"adj.",d:"stout; having a large, heavy body",h:"corp = body (corporation, corps). Corpulent means a lot of body, not a dead one.",t:"lifeless (corpse trap)",x:"The corpulent old walrus sprawled across the warm rock."},
+ {w:"MALLEABLE",p:"adj.",d:"able to be shaped or bent; easily influenced",h:"A mallet hammers metal into shape. Malleable metal can be shaped.",t:"",x:"Gold is so malleable that it can be hammered into sheets thinner than paper."},
+ {w:"ASCETIC",p:"noun / adj.",d:"a person who gives up comforts and pleasures; self-denying",h:"Do not confuse with aesthetic (about beauty). An ascetic avoids luxury.",t:"",x:"The ascetic monk slept on a wooden board and ate one simple meal a day."},
+ {w:"QUELL",p:"verb",d:"to put down, suppress, or calm",h:"Quell rhymes with “sell” but means stop: quell a riot, quell your fears.",t:"",x:"The teacher quelled the noise with a single look."},
+ {w:"IMPERVIOUS",p:"adj.",d:"not letting something through; unaffected by",h:"im = not + per = through + via = way: there is no way through.",t:"",x:"Her raincoat was impervious to water, and she was impervious to the teasing."},
+ {w:"NOVICE",p:"noun",d:"a beginner; someone new and inexperienced",h:"nov = new (novel, renovate).",t:"",x:"As a novice, she was still learning how to hold the climbing rope."},
+ {w:"ABSTEMIOUS",p:"adj.",d:"restrained; not indulging, especially in food or drink",h:"Think abstain: an abstemious person holds back.",t:"",x:"The abstemious guest took one small slice of cake and passed the rest along."},
+ {w:"SYCOPHANT",p:"noun",d:"a flatterer who praises powerful people to win favour",h:"A sycophant behaves in an obsequious way. The two words go together.",t:"",x:"The king’s sycophants praised every speech, no matter how dull."},
+ {w:"FLEDGLING",p:"noun / adj.",d:"a young bird just learning to fly; anything new and inexperienced",h:"Fledge means to grow flight feathers. A fledgling company is a brand-new one.",t:"",x:"The fledgling flapped from branch to branch under its parent’s watchful eye."},
+ {w:"EMBERS",p:"noun",d:"the glowing pieces left after a fire burns down",h:"Embers come after the fire, not at the start like sparks.",t:"",x:"We toasted marshmallows over the last embers of the campfire."}
+];
+const CHOICE_WORDS=[["soluble","able to be dissolved"],["frugal","careful with money"],["squander","to waste"],["seasoned","experienced"],["sapling","a young tree"],["hermit","a person who lives alone, away from society"],["braggart","a person who boasts"],["servile","too eager to obey"],["miser","a person who hoards money"],["extinguish","to put out"]];
+
+/* ---------- 2. vocabulary practice ---------- */
+const VOCAB=[
+ {key:"v1",title:"Set A · Synonyms, second try",dir:"These are the words from your test, with new answer choices. Watch for sound-alike traps. Pick the choice closest in meaning to the word in capitals.",items:[
+  {w:"OBDURATE",o:["obvious","durable","unyielding","sullen","obedient"],a:2,e:"Obdurate means stubborn and unyielding. Durable shares the root dur- but describes objects that last."},
+  {w:"RECALCITRANT",o:["unruly","calculating","relaxed","kindly","recalling"],a:0,e:"Recalcitrant means refusing to be controlled, so unruly is closest."},
+  {w:"OBSEQUIOUS",o:["arrogant","fawning","rebellious","sequential","obscure"],a:1,e:"Obsequious means too eager to please. Fawning means the same. Rebellious is the opposite."},
+  {w:"PUSILLANIMOUS",o:["unanimous","enormous","aggressive","timid","pushy"],a:3,e:"A tiny spirit is a timid, cowardly one. Pushy is the sound trap that caught you last time."},
+  {w:"EQUANIMITY",o:["animosity","agitation","serenity","similarity","equality"],a:2,e:"Equanimity means calm composure, so serenity is closest. Equality and similarity are equ- traps; agitation is the opposite."},
+  {w:"PROPITIOUS",o:["unlucky","auspicious","prophetic","suspicious","proper"],a:1,e:"Propitious and auspicious both mean favourable. Prophetic is the sound trap; unlucky is the opposite."},
+  {w:"VACILLATE",o:["sparkle","ventilate","commit","empty","fluctuate"],a:4,e:"To vacillate is to waver, and to fluctuate is to go up and down. Empty is the vacate trap; commit is the opposite."},
+  {w:"CAPRICIOUS",o:["reliable","generous","capable","unpredictable","spacious"],a:3,e:"Capricious means changing on a whim, so unpredictable fits. Reliable is the opposite."},
+  {w:"INDOLENT",o:["insolent","painful","sorrowful","diligent","slothful"],a:4,e:"Indolent means lazy, and slothful means the same. Sorrowful and painful are root traps; diligent is the opposite."},
+  {w:"MENDACIOUS",o:["dishonest","needy","truthful","stubborn","mended"],a:0,e:"Mendacious means lying, so dishonest is right. Truthful is the opposite."},
+  {w:"ENERVATE",o:["invigorate","unnerve","encircle","generate","exhaust"],a:4,e:"To enervate is to drain energy, so exhaust is right. Invigorate means the opposite. Unnerve means to make nervous, which is different."},
+  {w:"CORPULENT",o:["plump","deceased","slender","corrupt","wealthy"],a:0,e:"Corpulent means heavy-bodied, so plump fits. Deceased is the corpse trap; slender is the opposite."},
+  {w:"MALLEABLE",o:["rigid","pliable","brittle","mellow","malicious"],a:1,e:"Malleable and pliable both mean easily shaped. Brittle and rigid are opposites."},
+  {w:"ASCETIC",o:["athletic","artistic","luxurious","self-denying","acidic"],a:3,e:"An ascetic gives up comforts. Artistic is the aesthetic trap; luxurious is the opposite."},
+  {w:"QUELL",o:["swell","question","provoke","suppress","quarrel"],a:3,e:"To quell is to suppress. Provoke is the opposite."},
+  {w:"IMPERVIOUS",o:["impatient","porous","impenetrable","imperial","previous"],a:2,e:"Impervious means nothing gets through, so impenetrable fits. Porous, full of holes, is the opposite."},
+  {w:"NOVICE",o:["expert","beginner","novelist","notice","nomad"],a:1,e:"A novice is a beginner. Expert is the opposite."},
+  {w:"ABSTEMIOUS",o:["steamy","gluttonous","temperate","absent","abstract"],a:2,e:"Abstemious and temperate both mean moderate, holding back. Gluttonous is the opposite."},
+  {w:"SYCOPHANT",o:["leader","critic","rebel","prophet","flatterer"],a:4,e:"A sycophant is a flatterer. A critic finds fault, nearly the opposite."},
+  {w:"FLEDGLING",o:["newcomer","pledge","veteran","fugitive","elder"],a:0,e:"A fledgling is new and inexperienced, like a newcomer. Veteran and elder are opposites."}
+ ]},
+ {key:"v2",title:"Set B · Words in context",dir:"Choose the word that best completes each sentence. Read the whole sentence first and look for the clue that tells you what the blank must mean.",items:[
+  {s:"After twenty minutes of arguing, the ______ toddler still refused to put on his boots.",o:["abstemious","recalcitrant","corpulent","malleable","propitious"],a:1,e:"Clue: “refused.” A recalcitrant child resists being told what to do."},
+  {s:"Even when the alarm went off, the pilot spoke with complete ______, calmly guiding everyone to the exits.",o:["mendacity","futility","novelty","animosity","equanimity"],a:4,e:"Clue: “calmly.” Equanimity is calm composure."},
+  {s:"The ______ assistant agreed with everything the director said, even when the director contradicted herself.",o:["ascetic","impervious","obdurate","indolent","obsequious"],a:4,e:"Agreeing with everything to please someone is obsequious behaviour."},
+  {s:"Because clay is ______ when wet, the potter can form it into almost any shape.",o:["capricious","mendacious","impervious","malleable","pusillanimous"],a:3,e:"Clue: “form it into almost any shape.” Malleable means able to be shaped."},
+  {s:"The ______ witness had told so many different stories that the jury believed none of them.",o:["mendacious","propitious","corpulent","ascetic","equanimous"],a:0,e:"Different stories mean lies, and mendacious means lying."},
+  {s:"With a strong wind at their backs and a clear forecast, the sailors agreed it was a ______ moment to set out.",o:["recalcitrant","propitious","obsequious","pusillanimous","enervating"],a:1,e:"Everything is in their favour, so it is a propitious moment."},
+  {s:"The ______ teenager spent the whole afternoon on the couch, avoiding his chores.",o:["indolent","sycophantic","impervious","malleable","abstemious"],a:0,e:"Avoiding work all afternoon is indolent behaviour."},
+  {s:"The humid heat so ______ the runners that several could barely finish the race.",o:["invigorated","vacillated","flattered","enervated","quelled"],a:3,e:"Clue: “could barely finish.” The heat drained them, so it enervated them. Invigorated is the opposite."},
+  {s:"The ______ judge refused to change her decision no matter how many people begged her.",o:["capricious","malleable","obdurate","obsequious","indolent"],a:2,e:"Refusing to change no matter what is obdurate. Capricious and malleable mean the opposite."},
+  {s:"Unable to choose between the two summer camps, Maya ______ for weeks before finally deciding.",o:["vacillated","quelled","squandered","indulged","enervated"],a:0,e:"Going back and forth before deciding is vacillating."},
+  {s:"The ______ soldier fled at the first sound of battle, leaving his friends behind.",o:["ascetic","pusillanimous","propitious","magnanimous","impervious"],a:1,e:"Fleeing in fear is cowardly, so pusillanimous. Magnanimous is a look-alike with a different meaning."},
+  {s:"The principal’s calm announcement helped ______ the rumours spreading through the school.",o:["quell","ignite","indulge","enervate","vacillate"],a:0,e:"A calm announcement puts rumours down, so it quells them. Ignite is the opposite."},
+  {s:"Our ______ cat loves us one minute and hisses at us the next.",o:["impervious","corpulent","obdurate","abstemious","capricious"],a:4,e:"Changing suddenly for no reason is capricious."},
+  {s:"Her new jacket was ______ to rain, so she stayed perfectly dry during the storm.",o:["soluble","absorbent","porous","impervious","malleable"],a:3,e:"Stayed dry, so the rain could not get through: impervious. Porous and absorbent let water in."},
+  {s:"The ______ hermit gave away his possessions and lived on bread and water.",o:["aesthetic","sycophantic","ascetic","indolent","corpulent"],a:2,e:"Giving up comforts is ascetic. Aesthetic, about beauty, is the look-alike trap."},
+  {s:"A ______ bird, the young robin had only just learned to fly.",o:["obsequious","recalcitrant","fledgling","capricious","corpulent"],a:2,e:"A young bird just learning to fly is a fledgling."}
+ ]},
+ {key:"v3",title:"Set C · Stretch words",dir:"New Upper Level words that belong to the same families as the words you studied. Use what you now know to work them out. Pick the closest meaning.",items:[
+  {w:"INTRANSIGENT",o:["transparent","migratory","uncompromising","temporary","cooperative"],a:2,e:"Intransigent means refusing to compromise. Same family as obdurate."},
+  {w:"OBSTINATE",o:["obvious","stubborn","gentle","obstructed","absent"],a:1,e:"Obstinate means stubborn. Another obdurate word."},
+  {w:"TIMOROUS",o:["bold","fearful","humorous","tremendous","punctual"],a:1,e:"Timorous means fearful, like timid. Same family as pusillanimous."},
+  {w:"DAUNTLESS",o:["discouraged","fearless","doubtful","careless","dull"],a:1,e:"Dauntless means fearless, the opposite of pusillanimous."},
+  {w:"AUSPICIOUS",o:["ancient","august","anxious","suspicious","promising"],a:4,e:"Auspicious means promising or favourable. Same family as propitious."},
+  {w:"FAWNING",o:["flattering","faded","young","defiant","yawning"],a:0,e:"Fawning means flattering too much. Young is the trap: a fawn is a young deer, but fawning is the obsequious word."},
+  {w:"MERCURIAL",o:["metallic","merciful","commercial","changeable","steady"],a:3,e:"Mercurial means quickly changing moods. Same family as capricious."},
+  {w:"LETHARGIC",o:["sluggish","energetic","lethal","liberal","legal"],a:0,e:"Lethargic means sluggish and without energy. Same family as indolent. Lethal is the sound trap."},
+  {w:"VERACIOUS",o:["voracious","various","false","vicious","truthful"],a:4,e:"Veracious means truthful, the opposite of mendacious. Voracious (very hungry) is the sound trap."},
+  {w:"DEBILITATE",o:["debate","strengthen","weaken","decorate","delay"],a:2,e:"To debilitate is to weaken. Same family as enervate."},
+  {w:"IMPERTURBABLE",o:["disturbed","impatient","imperfect","calm","permanent"],a:3,e:"Imperturbable means impossible to upset. Someone imperturbable has equanimity."},
+  {w:"PLIANT",o:["plain","planted","flexible","rigid","pleasant"],a:2,e:"Pliant means flexible. Same family as malleable."},
+  {w:"SPARTAN",o:["ancient","sporty","lavish","partial","austere"],a:4,e:"Spartan means plain and without comforts. Austere means the same. An ascetic lives a spartan life."},
+  {w:"TEMPERATE",o:["moderate","extreme","tempting","temporary","hot-tempered"],a:0,e:"Temperate means moderate. Same family as abstemious."},
+  {w:"EQUIVOCATE",o:["vacate","equalize","shout","hedge","confirm"],a:3,e:"To equivocate is to speak vaguely to avoid giving a clear answer, which is to hedge. Confirm is the opposite."}
+ ]}
+];
+
+/* ---------- 3. method walkthrough (his nine misses) ---------- */
+const WALK=[
+ {n:17,s:"Malleable is to shape",sents:["Something malleable can easily be shaped.","Malleable has something to do with shape."],g:0,o:["rigid is to bend","fragile is to protect","soluble is to dissolve","visible is to hide","edible is to cook"],a:2,was:"B (fragile is to protect)",e:"Something soluble can easily be dissolved. Fragile is to protect fails the sentence: a fragile thing needs protecting, which is a different relationship."},
+ {n:20,s:"Ascetic is to luxury",sents:["An ascetic is connected to luxury.","An ascetic avoids luxury."],g:1,o:["glutton is to food","miser is to wealth","scholar is to books","hermit is to society","athlete is to exercise"],a:3,was:"B (miser is to wealth)",e:"A hermit avoids society. A miser loves and hoards wealth, which is the reverse."},
+ {n:22,s:"Quell is to rebellion",sents:["To quell a rebellion is to put an end to it.","To quell is to do something to a rebellion."],g:0,o:["ignite is to flame","join is to club","start is to race","write is to letter","extinguish is to fire"],a:4,was:"A (ignite is to flame)",e:"To extinguish a fire is to put an end to it. Ignite starts a flame, which is the reverse direction."},
+ {n:25,s:"Impervious is to water",sents:["Impervious is a word about water.","Something impervious to water keeps water out."],g:1,o:["porous is to liquid","soluble is to sugar","absorbent is to sponge","fireproof is to flame","fragile is to glass"],a:3,was:"C (absorbent is to sponge)",e:"Something fireproof keeps flame out. Absorbent is to sponge fails twice: an absorbent thing lets water in, and the second word is the object that has the quality, not the thing it keeps out."},
+ {n:26,s:"Novice is to inexperienced",sents:["A novice is, by definition, inexperienced.","A novice and inexperienced go together."],g:0,o:["child is to adult","rookie is to skilled","veteran is to seasoned","teacher is to student","amateur is to paid"],a:2,was:"E (amateur is to paid)",e:"A veteran is, by definition, seasoned. An amateur is by definition NOT paid, so that pair is the opposite relationship."},
+ {n:28,s:"Abstemious is to indulge",sents:["An abstemious person does NOT indulge.","An abstemious person and indulging are related."],g:0,o:["generous is to give","curious is to ask","frugal is to squander","honest is to tell","eager is to begin"],a:2,was:"A (generous is to give)",e:"A frugal person does NOT squander. A generous person DOES give, which is the reverse."},
+ {n:29,s:"Sycophant is to flatter",sents:["A sycophant has to do with flattering.","A sycophant flatters too much, to win favour."],g:1,o:["critic is to praise","braggart is to boast","hermit is to visit","traitor is to defend","coward is to fight"],a:1,was:"A (critic is to praise)",e:"A braggart boasts too much. A critic is known for finding fault, not for praising."},
+ {n:30,s:"Embers are to fire",sents:["Embers are part of a fire.","Embers are what is left after a fire burns out."],g:1,o:["seeds are to plant","spark is to flame","smoke is to chimney","wave is to ocean","ruins are to city"],a:4,was:"D (wave is to ocean)",e:"Ruins are what is left after a city is destroyed. This is the clearest example of why the sentence matters: with the vague sentence “part of,” wave is to ocean fits, and that is exactly the answer you chose."},
+ {n:48,s:"Fledgling is to bird",sents:["A fledgling is a young bird.","A fledgling has to do with birds."],g:0,o:["acorn is to squirrel","nest is to egg","root is to flower","branch is to leaf","sapling is to tree"],a:4,was:"C (root is to flower)",e:"A sapling is a young tree. A root is a part of a flower, not a young flower."}
+];
+
+/* ---------- 4. analogy practice ---------- */
+const ANA=[
+ {s:"Parched is to water as",o:["famished is to food","rich is to money","frozen is to ice","drenched is to rain","sleepy is to bed"],a:0,e:"Something parched badly needs water; someone famished badly needs food. Drenched has too much water, which is the reverse."},
+ {s:"Pliable is to bend as",o:["frozen is to melt","sharp is to dull","sturdy is to collapse","brittle is to break","stubborn is to agree"],a:3,e:"Something pliable bends easily; something brittle breaks easily. Sturdy things do not collapse easily, which is the reverse."},
+ {s:"Pacifist is to violence as",o:["athlete is to sport","glutton is to food","author is to book","vegetarian is to meat","doctor is to medicine"],a:3,e:"A pacifist rejects violence; a vegetarian rejects meat. A glutton seeks food, which is the reverse."},
+ {s:"Douse is to flame as",o:["light is to candle","kindle is to spark","quench is to thirst","stoke is to fire","fan is to ember"],a:2,e:"To douse a flame is to put an end to it; to quench thirst is to put an end to it. Fan, stoke and kindle make things stronger or start them."},
+ {s:"Tadpole is to frog as",o:["scale is to fish","web is to spider","hive is to bee","nest is to robin","caterpillar is to butterfly"],a:4,e:"A tadpole is a young frog; a caterpillar is a young butterfly. The others are homes or parts."},
+ {s:"Ashes are to fire as",o:["spark is to flame","rain is to cloud","wreckage is to crash","seed is to fruit","wick is to candle"],a:2,e:"Ashes are what is left after a fire; wreckage is what is left after a crash. A spark comes at the beginning."},
+ {s:"Philanthropist is to generous as",o:["coward is to bold","teacher is to young","miser is to stingy","thief is to honest","doctor is to sick"],a:2,e:"A philanthropist is, by definition, generous; a miser is, by definition, stingy. Thief is to honest pairs a word with its opposite."},
+ {s:"Neophyte is to experience as",o:["giant is to height","scholar is to books","pauper is to money","athlete is to strength","expert is to knowledge"],a:2,e:"A neophyte (beginner) lacks experience; a pauper lacks money. The expert, giant and athlete all have what they are paired with."},
+ {s:"Waterproof is to moisture as",o:["airtight is to air","soluble is to water","transparent is to light","magnetic is to iron","porous is to liquid"],a:0,e:"Something waterproof keeps moisture out; something airtight keeps air out. Transparent and porous let things through."},
+ {s:"Flammable is to ignite as",o:["invisible is to see","durable is to break","fragile is to protect","edible is to eat","portable is to stay"],a:3,e:"Something flammable can be ignited; something edible can be eaten. Durable and invisible mean it cannot be broken or seen."},
+ {s:"Spendthrift is to save as",o:["chef is to cook","gossip is to talk","artist is to paint","hoarder is to keep","miser is to spend"],a:4,e:"A spendthrift does NOT save; a miser does NOT spend. The other people all do what they are paired with."},
+ {s:"Glutton is to eat as",o:["braggart is to boast","recluse is to socialize","mute is to speak","coward is to fight","insomniac is to sleep"],a:0,e:"A glutton eats too much; a braggart boasts too much. An insomniac, a recluse, a coward and a mute do too little of their action."},
+ {s:"Recluse is to company as",o:["celebrity is to fame","ascetic is to comfort","host is to guest","artist is to beauty","actor is to audience"],a:1,e:"A recluse avoids company; an ascetic avoids comfort."},
+ {s:"Suppress is to uprising as",o:["plan is to party","begin is to race","spread is to news","quash is to rumour","cause is to accident"],a:3,e:"To suppress an uprising is to put an end to it; to quash a rumour is to put an end to it. Spread, begin and cause start or grow things."},
+ {s:"Kindle is to fire as",o:["incite is to riot","finish is to race","end is to war","extinguish is to flame","calm is to storm"],a:0,e:"To kindle a fire is to start it; to incite a riot is to start it. This is the reverse of quell: check the direction every time."},
+ {s:"Prologue is to play as",o:["finale is to concert","epilogue is to novel","chapter is to story","index is to textbook","preface is to book"],a:4,e:"A prologue comes at the beginning of a play; a preface comes at the beginning of a book. Epilogue, finale and index come at the end."},
+ {s:"Finale is to concert as",o:["prologue is to story","epilogue is to novel","rehearsal is to play","overture is to opera","introduction is to essay"],a:1,e:"A finale comes at the end of a concert; an epilogue comes at the end of a novel."},
+ {s:"Scrupulous is to careless as",o:["loyal is to faithful","tired is to weary","eager is to keen","candid is to deceptive","frugal is to thrifty"],a:3,e:"Scrupulous and careless are opposites; so are candid (honest) and deceptive. The other pairs are synonyms."},
+ {s:"Benevolent is to kindness as",o:["tired is to energy","frugal is to waste","malevolent is to cruelty","dull is to interest","timid is to courage"],a:2,e:"A benevolent person is full of kindness; a malevolent person is full of cruelty. The other people lack what they are paired with."},
+ {s:"Anonymous is to name as",o:["wealthy is to money","tall is to height","colourful is to paint","famous is to fame","shapeless is to form"],a:4,e:"Something anonymous has no name; something shapeless has no form."},
+ {s:"Drizzle is to downpour as",o:["storm is to cloud","breeze is to gale","ocean is to lake","shout is to whisper","flood is to trickle"],a:1,e:"A drizzle is a weak version of a downpour; a breeze is a weak version of a gale. Flood is to trickle and shout is to whisper run strong to weak, which is the reverse order."},
+ {s:"Petal is to flower as",o:["bud is to rose","sapling is to tree","nest is to bird","seed is to plant","page is to book"],a:4,e:"A petal is a part of a flower; a page is a part of a book. Sapling and bud are early stages, not parts. Here “part of” is the right sentence."},
+ {s:"Truculent is to fight as",o:["quiet is to shout","garrulous is to talk","calm is to panic","timid is to boast","lazy is to work"],a:1,e:"A truculent person is eager to fight; a garrulous person is eager to talk. The others describe people who avoid their action."},
+ {s:"Obdurate is to persuade as",o:["impervious is to penetrate","edible is to eat","flexible is to bend","eager is to start","curious is to ask"],a:0,e:"Someone obdurate cannot be persuaded; something impervious cannot be penetrated. Flexible and edible mean it can."},
+ {s:"Pusillanimous is to courage as",o:["generous is to gifts","indolent is to industry","brave is to danger","curious is to questions","wise is to knowledge"],a:1,e:"A pusillanimous person lacks courage; an indolent person lacks industry (hard work)."}
+];
+
+const READING=[
+ {key:"r1",label:"Passage 1 · Humorous essay",passage:[
+  "Every morning at 6:45, my alarm clock announces the day with the urgency of a fire truck, and every morning at 6:45 and five seconds, I hit the snooze button. My mother calls this a character flaw. I prefer to think of it as diplomacy. The day and I have a great deal to discuss, and I see no reason to rush the negotiations.",
+  "The snooze button gives me nine precious minutes, which is exactly long enough to have a dream about being late for school. I find this efficient: I get the panic out of the way early, while I am still warm. By the time the alarm sounds again, I have already survived the worst that could happen, and the real morning seems almost reasonable.",
+  "Critics of the snooze button (chiefly my mother) argue that it only makes waking up harder, and I am told that sleep scientists tend to agree with her. I do not dispute the science. I simply note that scientists are not the ones lying under three blankets in a cold room in February.",
+  "Still, I have made one concession. I now keep my alarm clock on the far side of the room, so that silencing it requires me to stand up, cross the floor, and face the day on its own terms. My mother calls this progress. I call it a ceasefire."],
+  items:[
+  {s:"The phrase “with the urgency of a fire truck” (paragraph 1) suggests that the alarm is",o:["far away", "loud and insistent", "painted red", "broken", "gentle and musical"],a:1,e:"A fire truck is loud and in a hurry. The comparison tells us the alarm is loud and demanding."},
+  {s:"The author calls hitting the snooze button “diplomacy” in order to",o:["criticize his mother", "describe his career goals", "explain how governments work", "admit that he is lazy", "humorously present a bad habit as a thoughtful choice"],a:4,e:"This is the same kind of question you missed on the test. Diplomacy is careful negotiation, so calling snoozing “diplomacy” is a joke: he makes a bad habit sound wise and grown-up."},
+  {s:"The author finds his dream about being late “efficient” because",o:["it wakes him up faster", "he has fewer dreams", "it saves time getting dressed", "his mother approves of it", "it makes the real morning feel less stressful by comparison"],a:4,e:"He has “already survived the worst,” so the real morning “seems almost reasonable.”"},
+  {s:"“I do not dispute the science” (paragraph 3) means that the author",o:["does not argue with the research", "rejects the research", "did the research himself", "misunderstands the research", "has not read the research"],a:0,e:"To dispute is to argue against. He accepts the science but jokes that scientists aren’t the ones in the cold room."},
+  {s:"The words “negotiations,” “concession,” and “ceasefire” all present waking up as if it were",o:["a school subject", "a family celebration", "a medical problem", "a conflict between two sides", "a race"],a:3,e:"All three words come from disagreements and wars: two sides that must reach a deal. The author keeps the joke going through the whole essay."},
+  {s:"The tone of the passage is best described as",o:["scientific and neutral", "urgent and alarmed", "playful and self-mocking", "sad and regretful", "angry and bitter"],a:2,e:"He laughs at his own habit throughout. Nothing in the passage is angry or sad."}
+ ]},
+ {key:"r2",label:"Passage 2 · History",passage:[
+  "In the summer of 1858, London held its nose. For decades the city’s waste had flowed, largely untreated, into the River Thames, and an unusually hot summer turned the river into an open sewer. The smell was so overpowering that officials in the Houses of Parliament, which stand on the riverbank, hung curtains soaked in chemicals over the windows in a desperate attempt to block it out.",
+  "The episode, soon known as the Great Stink, accomplished what years of reports had not. Lawmakers who could no longer ignore the problem, because it was drifting into their own chamber, quickly approved money for a new sewer system. The task went to an engineer named Joseph Bazalgette.",
+  "Bazalgette’s plan was bold. Rather than letting dozens of small sewers empty into the river in the heart of the city, he designed large “intercepting” sewers that ran alongside the Thames, catching the waste and carrying it east, well downstream of central London. When calculating how wide the pipes should be, he is said to have doubled his own estimates, reasoning that the work would only be done once. His caution proved wise: the city’s population grew far beyond anything he could have predicted, and parts of his system are still in use today.",
+  "Ironically, many of the people who supported the project, Bazalgette included, believed that diseases such as cholera were spread by foul-smelling air. In fact, cholera spreads through contaminated water. The new sewers helped anyway: by keeping waste away from the water Londoners used, they sharply reduced outbreaks. The right solution, it turned out, had been built for the wrong reason."],
+  items:[
+  {s:"The phrase “London held its nose” (paragraph 1) suggests that",o:["the city was waiting nervously for news", "Londoners were sick with colds", "the river had frozen", "the whole city was disgusted by the smell", "people stopped going outside"],a:3,e:"A city cannot literally hold its nose. The figure of speech shows that everyone in London was reacting to the smell."},
+  {s:"According to the passage, lawmakers finally acted because",o:["the smell reached them directly", "Bazalgette organized a protest", "the queen ordered them to", "cholera broke out in Parliament", "scientists made a new discovery"],a:0,e:"The problem was “drifting into their own chamber.” Years of reports had not moved them, but the smell did."},
+  {s:"Bazalgette doubled his estimates for the pipes because he",o:["was ordered to by Parliament", "expected to rebuild them soon", "wanted the work done once and done well", "found the pipes cheap", "had made a mistake in his math"],a:2,e:"He reasoned “that the work would only be done once,” so he built extra room for the future."},
+  {s:"The author supports the claim that “his caution proved wise” by pointing out that",o:["Bazalgette discovered a cure for cholera", "the chemical curtains worked", "the population grew and parts of the system are still used", "newspapers praised the engineer", "the river became clean in one summer"],a:2,e:"The rest of the sentence gives the evidence: the population grew far beyond his predictions, and the system still works."},
+  {s:"The irony described in the final paragraph is that",o:["Bazalgette disliked the smell", "the sewers made cholera worse", "people missed the smell", "Parliament moved away from the river", "the project worked even though it was based on a mistaken belief"],a:4,e:"They built the sewers to remove bad air, but the sewers helped because they kept waste out of the water: “the right solution… built for the wrong reason.”"},
+  {s:"As used in paragraph 3, “intercepting” most nearly means",o:["measuring", "catching on the way", "interrupting a speech", "opening", "stealing"],a:1,e:"The sewers caught the waste before it reached the river: “catching the waste and carrying it east.”"}
+ ]},
+ {key:"r3",label:"Passage 3 · Poem",poem:true,passage:[
+  "<b>Heron at Low Tide</b>",
+  "All morning the heron has not moved.<br>It stands in the shallows like a question<br>no one has thought to answer,<br>one leg folded away like a letter<br>it has decided not to send.",
+  "The tide goes out around it, carefully,<br>the way you step around someone sleeping.<br>Gulls argue overhead.<br>Nothing hurries it. Nothing is its business",
+  "until, all at once, the water breaks:<br>a flash of silver, a quick stab, gone,<br>and the heron is a heron again, lifting<br>its grey coat off the river<br>and rowing slowly into the wind."],
+  items:[
+  {s:"The heron is compared to “a question / no one has thought to answer” to emphasize its",o:["bright colour", "fear", "stillness and mystery", "loud call", "hunger"],a:2,e:"An unanswered question just sits there, waiting. The heron is still and a little mysterious."},
+  {s:"The simile “one leg folded away like a letter / it has decided not to send” suggests that the heron’s leg is",o:["covered in writing", "tucked away and held back", "broken off", "injured", "wet"],a:1,e:"A letter you decide not to send is kept back and put away. The leg is folded up, not in use."},
+  {s:"In the line “until, all at once, the water breaks,” the word “until” marks",o:["a shift from stillness to sudden action", "the heron’s death", "a change in the weather", "the end of the day", "the speaker waking up"],a:0,e:"Everything before “until” is calm and still. Everything after it is fast: the water breaks, a stab, gone."},
+  {s:"“A flash of silver, a quick stab, gone” most likely describes",o:["a boat passing", "sunlight on the tide", "a coin falling into the river", "lightning over the water", "the heron catching a fish"],a:4,e:"The silver flash is a fish, the stab is the heron’s beak, and then the fish is gone, eaten."},
+  {s:"“Rowing slowly into the wind” compares the heron’s",o:["wings to oars", "beak to a paddle", "legs to a boat", "feathers to sails", "neck to a mast"],a:0,e:"Rowing is done with oars. The heron’s slow wingbeats push it through the air the way oars push a boat."},
+  {s:"The speaker’s attitude toward the heron is best described as",o:["disapproval", "pity", "boredom", "patient admiration", "fear"],a:3,e:"The speaker watches all morning and describes the bird with care and delight. Nothing suggests fear, boredom or disapproval."}
+ ]},
+ {key:"r4",label:"Passage 4 · Science",passage:[
+  "A diver drifting over a reef may pass within arm’s length of an octopus and never see it. One moment there is only a mottled rock; the next, the “rock” unfolds eight arms and jets away. Few animals are better at disappearing in plain sight.",
+  "The trick lies in the octopus’s skin, which is packed with thousands of tiny sacs of pigment called chromatophores. Each sac is ringed by muscles. When the muscles pull, the sac stretches open and its colour spreads across a larger patch of skin; when they relax, the sac shrinks to a nearly invisible dot. Because these muscles are controlled directly by the nervous system, an octopus can change its appearance in well under a second. It can even change its texture, raising small bumps on its skin to imitate coral or seaweed.",
+  "What makes this ability puzzling is that octopuses appear to be colour-blind. Their eyes contain only one type of light-sensitive cell, which should leave them unable to tell many colours apart. How, then, do they match their surroundings so precisely?",
+  "Scientists do not yet have a complete answer. One intriguing clue is that researchers have found light-detecting proteins in the skin of some octopuses, the same kind of proteins that eyes use to sense light. It is possible that the skin itself helps the animal “see” what is around it. For now, the octopus keeps part of its secret, which, for a creature so skilled at hiding, seems only fitting."],
+  items:[
+  {s:"The main purpose of the passage is to",o:["compare octopuses with fish", "argue that octopuses are dangerous to divers", "prove that octopuses can see colour", "give instructions for spotting an octopus", "explain how octopuses change their appearance and describe an unsolved puzzle"],a:4,e:"Paragraph 2 explains how the skin works; paragraphs 3–4 describe the puzzle that scientists have not solved."},
+  {s:"The author puts “rock” in quotation marks in paragraph 1 because",o:["a diver said the word", "it emphasizes how hard the rock is", "the object is not really a rock", "it is the title of a book", "it is a scientific term"],a:2,e:"The “rock” turns out to be an octopus. The quotation marks signal that the word isn’t meant literally."},
+  {s:"According to paragraph 2, a chromatophore spreads its colour when",o:["the octopus closes its eyes", "the water warms up", "it shrinks to a dot", "the muscles around it pull", "the octopus eats"],a:3,e:"“When the muscles pull, the sac stretches open and its colour spreads.”"},
+  {s:"The author calls the octopus’s ability “puzzling” because octopuses",o:["seem unable to see the colours they match", "have never been observed doing it", "change colour very slowly", "rarely use it", "only use it at night"],a:0,e:"They appear to be colour-blind, yet they match colours precisely. That contradiction is the puzzle."},
+  {s:"The author’s attitude toward the idea that the skin helps the octopus “see” is best described as",o:["dismissive", "interested but cautious", "certain that it is correct", "angry", "completely confused"],a:1,e:"The author calls it an “intriguing clue” (interested) but says “it is possible” and “scientists do not yet have a complete answer” (cautious)."},
+  {s:"The final sentence suggests that it is “fitting” for the octopus to keep its secret because",o:["secrets are dangerous", "an animal that is an expert at hiding is also hiding how it does it", "octopuses do not live long", "scientists have given up", "divers prefer a mystery"],a:1,e:"It is a little joke: a master of hiding is, fittingly, hiding the answer from scientists too."}
+ ]}
+];
+
+/* ---------- storage ---------- */
+const KEY="ssat-review-room-v3";
+let S={tab:"bank",ans:{},walk:{},sent:{},bankIdx:0,bankStep:0,bankAll:false};
+try{const r=localStorage.getItem(KEY); if(r) S=Object.assign(S,JSON.parse(r));}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+
+/* ---------- word bank ---------- */
+function renderBank(){
+  const h=document.getElementById("sec-bank");
+  if(S.bankAll){ renderBankAll(h); return; }
+  const i=Math.min(S.bankIdx||0,WORDS.length-1), st=S.bankStep||0, w=WORDS[i];
+  const steps=[
+    ["Meaning",`<div class="def">${w.d}</div>${w.t?`<div class="row"><span>On the test you chose</span><span class="trap">${w.t}</span></div>`:""}`],
+    ["Memory trick",`<div class="row">${w.h}</div>`],
+    ["Example",`<div class="row"><i>${w.x}</i></div>`],
+    ["Your turn",`<div class="row"><b>Say your own sentence using ${w.w.toLowerCase()} out loud.</b></div>`]
+  ];
+  const prompt=st===0?(w.t?`Last time you thought this meant “${w.t.replace(/ \(.*\)/,"")}.” What do you think it means now?`:"Have you seen this word before? What do you think it means?"):"";
+  h.innerHTML=`<h2 class="part">Word Bank</h2>
+  <p class="dir">One word at a time. Answer each question out loud before you click to reveal the next part.</p>
+  <div class="setbar"><b>${i+1}/${WORDS.length}</b><span class="sub">${i<12?"From the synonym section":"From the analogy section"}</span><span class="spacer"></span><button class="btn" id="b-all">See all cards</button></div>
+  <div class="lesson wcard" style="padding:22px 24px">
+    <div><span class="w" style="font-family:var(--f-display);font-size:2rem;font-weight:600;letter-spacing:.05em">${w.w}</span><span class="pos" style="color:var(--muted);font-style:italic;margin-left:8px">${w.p}</span></div>
+    ${prompt?`<p style="font-size:1.05rem;margin-top:10px">${prompt}</p>`:""}
+    ${steps.slice(0,st).map(([k,v])=>`<div class="step">${k}</div>${v}`).join("")}
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:18px">
+      <button class="btn" id="b-prev" ${i===0&&st===0?"disabled":""}>Back</button>
+      ${st<steps.length?`<button class="btn primary" id="b-rev">Reveal: ${steps[st][0]}</button>`:(i<WORDS.length-1?`<button class="btn primary" id="b-next">Next word</button>`:`<span class="sub" style="align-self:center">All ${WORDS.length} words done. Go to Vocabulary Practice.</span>`)}
+    </div>
+  </div>`;
+  const go=(ni,ns)=>{S.bankIdx=ni;S.bankStep=ns;save();renderBank();};
+  h.querySelector("#b-all").onclick=()=>{S.bankAll=true;save();renderBank();};
+  const rv=h.querySelector("#b-rev"); if(rv) rv.onclick=()=>go(i,st+1);
+  const nx=h.querySelector("#b-next"); if(nx) nx.onclick=()=>go(i+1,0);
+  h.querySelector("#b-prev").onclick=()=>{ if(st>0) go(i,st-1); else if(i>0) go(i-1,steps.length); };
+}
+function renderBankAll(h){
+  h.innerHTML=`<h2 class="part">Word Bank · all cards</h2>
+  <p class="dir">For review after the lesson. Red label = the wrong answer chosen on the test.</p>
+  <div class="wb-tools"><button class="btn primary" id="b-back">Back to one word at a time</button></div>
+  <div class="cards">${WORDS.map(w=>`<div class="card"><div><span class="w">${w.w}</span><span class="pos">${w.p}</span></div>
+    <div class="def">${w.d}</div><div class="row"><span>Remember</span>${w.h}</div><div class="row"><span>Example</span><i>${w.x}</i></div>
+    ${w.t?`<div class="row"><span>You chose</span><span class="trap">${w.t}</span></div>`:""}</div>`).join("")}</div>
+  <h2 class="part">Words from the answer choices</h2>
+  <div class="chips">${CHOICE_WORDS.map(([w,d])=>`<span class="chip"><b>${w}</b>: ${d}</span>`).join("")}</div>`;
+  h.querySelector("#b-back").onclick=()=>{S.bankAll=false;save();renderBank();};
+}
+
+/* ---------- multiple-choice set with instant feedback ---------- */
+function mcSet(host,key,items,opts={}){
+  const st=S.ans[key]||(S.ans[key]={});
+  const bar=document.createElement("div"); bar.className="setbar"; host.appendChild(bar);
+  const list=document.createElement("div"); host.appendChild(list);
+  function scoreLine(){
+    let r=0,n=0; items.forEach((it,i)=>{if(st[i]!=null){n++; if(st[i]===it.a)r++}});
+    bar.innerHTML=`<b>${r}/${items.length}</b><span class="sub">${n} of ${items.length} answered · first try counts</span><span class="spacer"></span><button class="btn warn">Try this set again</button>`;
+    let armed=false; const b=bar.querySelector("button");
+    b.onclick=()=>{if(!armed){armed=true;b.textContent="Click again to clear";setTimeout(()=>{armed=false;b.textContent="Try this set again"},3000);return}
+      S.ans[key]={}; if(opts.sentKey) S.sent[opts.sentKey]={}; save(); host.innerHTML=""; opts.rebuild();};
+  }
+  items.forEach((it,i)=>{
+    const c=document.createElement("div"); c.className="q";
+    const stem=it.w?`<span class="word">${it.w}</span>`:(it.s.includes("______")||/[?:]$/.test(it.s)?esc(it.s):esc(it.s)+":");
+    c.innerHTML=`<div class="qhead"><span class="num">${i+1}</span><div class="stem">${stem}</div></div>
+      <div class="indent">${opts.sentKey?`<div class="mysent"><label for="s-${key}-${i}">Your sentence (write it before you look at the choices)</label><input id="s-${key}-${i}" placeholder="e.g. A ___ is something that ___"></div>`:""}
+      <div class="opts">${it.o.map((o,k)=>`<button class="opt" data-k="${k}"><span class="l">${L[k]}</span><span>${esc(o)}</span></button>`).join("")}</div></div>`;
+    if(opts.sentKey){const inp=c.querySelector("input"); const ss=S.sent[opts.sentKey]||(S.sent[opts.sentKey]={}); inp.value=ss[i]||""; inp.oninput=()=>{ss[i]=inp.value;save()};}
+    const paint=()=>{const p=st[i]; c.classList.toggle("done",p!=null);
+      c.querySelectorAll(".opt").forEach(b=>{const k=+b.dataset.k; b.classList.toggle("right",p!=null&&k===it.a); b.classList.toggle("wrong",p!=null&&k===p&&p!==it.a);});
+      let ex=c.querySelector(".expl"); if(p!=null){ if(!ex){ex=document.createElement("div");ex.className="expl";c.querySelector(".indent").appendChild(ex)}
+        ex.innerHTML=`<strong>${p===it.a?"Correct.":"Not quite. The answer is "+L[it.a]+"."}</strong> ${esc(it.e)}`;} else if(ex) ex.remove();};
+    c.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(st[i]!=null)return; st[i]=+b.dataset.k; save(); paint(); scoreLine();});
+    paint(); list.appendChild(c);
+  });
+  scoreLine();
+}
+
+function renderVocab(){
+  const h=document.getElementById("sec-vocab"); h.innerHTML="";
+  h.insertAdjacentHTML("beforeend",`<p class="dir" style="margin-top:16px">Study the Word Bank first. Each answer is marked as soon as you click it, and your first click is the one that counts.</p>`);
+  VOCAB.forEach(set=>{
+    h.insertAdjacentHTML("beforeend",`<h2 class="part">${set.title}</h2><p class="dir">${set.dir}</p>`);
+    const box=document.createElement("div"); h.appendChild(box);
+    mcSet(box,set.key,set.items,{rebuild:renderVocab});
+  });
+}
+
+/* ---------- method ---------- */
+function renderMethod(){
+  const h=document.getElementById("sec-method"); h.innerHTML=`
+  <h2 class="part">Your method: make a sentence</h2>
+  <div class="lesson">
+    <p>You already know the method: turn the first pair into a sentence, then try each answer choice in the <b>same</b> sentence. Only one choice should fit.</p>
+    <div class="formula">Malleable is to shape → “Something malleable <span class="key">can easily be</span> shaped.”<br>Soluble is to dissolve → “Something soluble <span class="key">can easily be</span> dissolved.” ✓</div>
+    <p>On the test you got 16 of 25 analogies right, so the method is working. Your 9 misses had one thing in common: <b>your sentence was too vague.</b> A vague sentence like “X has something to do with Y” lets wrong answers fit, especially answers that point the <b>opposite way</b>.</p>
+  </div>
+
+  <h2 class="part">Make the sentence precise</h2>
+  <p class="dir">Each row is a relationship you missed on the test. The highlighted key words are what make the sentence precise: the correct answer fits the same sentence word for word, and the answer you chose does not.</p>
+  <div class="lesson tw"><table class="pat">
+    <tr><th>Relationship</th><th>Sentence from your test</th><th>✓ Correct answer</th><th>✗ What you chose</th></tr>
+    <tr><td>Does / does not</td><td>An abstemious person <span class="key">does NOT</span> indulge.</td><td class="ok">A frugal person <span class="key">does NOT</span> squander.</td><td class="no">Generous is to give: a generous person DOES give.</td></tr>
+    <tr><td>Avoids</td><td>An ascetic <span class="key">avoids</span> luxury.</td><td class="ok">A hermit <span class="key">avoids</span> society.</td><td class="no">Miser is to wealth: a miser loves wealth.</td></tr>
+    <tr><td>Too much</td><td>A sycophant flatters <span class="key">too much</span>.</td><td class="ok">A braggart boasts <span class="key">too much</span>.</td><td class="no">Critic is to praise: a critic finds fault.</td></tr>
+    <tr><td>Can be</td><td>Something malleable <span class="key">can be</span> shaped.</td><td class="ok">Something soluble <span class="key">can be</span> dissolved.</td><td class="no">Fragile is to protect: it needs protecting.</td></tr>
+    <tr><td>Keeps out</td><td>Something impervious to water <span class="key">keeps</span> water <span class="key">out</span>.</td><td class="ok">Something fireproof <span class="key">keeps</span> flame <span class="key">out</span>.</td><td class="no">Absorbent is to sponge: lets water in.</td></tr>
+    <tr><td>Puts an end to</td><td>To quell a rebellion is to <span class="key">put an end to</span> it.</td><td class="ok">To extinguish a fire is to <span class="key">put an end to</span> it.</td><td class="no">Ignite is to flame: starts it.</td></tr>
+    <tr><td>By definition</td><td>A novice is, <span class="key">by definition</span>, inexperienced.</td><td class="ok">A veteran is, <span class="key">by definition</span>, seasoned.</td><td class="no">Amateur is to paid: by definition NOT paid.</td></tr>
+    <tr><td>Young version</td><td>A fledgling is <span class="key">a young</span> bird.</td><td class="ok">A sapling is <span class="key">a young</span> tree.</td><td class="no">Root is to flower: a part, not a young flower.</td></tr>
+    <tr><td>What is left</td><td>Embers are what is <span class="key">left after</span> a fire.</td><td class="ok">Ruins are what is <span class="key">left after</span> a city.</td><td class="no">Wave is to ocean: a part, not what is left.</td></tr>
+  </table></div>
+
+  <h2 class="part">Other common relationships</h2>
+  <p class="dir">These are the other relationship types that appear on the SSAT. You already got many of them right on the test. Learn the key words so you can build a precise sentence for any analogy.</p>
+  <div class="lesson tw"><table class="pat">
+    <tr><th>Relationship</th><th>Sample sentence</th><th>More pairs like it</th></tr>
+    <tr><td>Synonyms</td><td>Timid <span class="key">means the same as</span> shy.</td><td>reluctant : unwilling</td></tr>
+    <tr><td>Antonyms</td><td>Bold <span class="key">is the opposite of</span> timid.</td><td>meticulous : careless</td></tr>
+    <tr><td>Degree</td><td>A torrent is <span class="key">a much stronger version of</span> a trickle.</td><td>drizzle : downpour · warm : hot</td></tr>
+    <tr><td>Part to whole</td><td>A petal <span class="key">is part of</span> a flower.</td><td>page : book · coda : symphony</td></tr>
+    <tr><td>Type / category</td><td>A sparrow <span class="key">is a kind of</span> bird.</td><td>oak : tree · sonnet : poem</td></tr>
+    <tr><td>Member to group</td><td>A wolf <span class="key">belongs to</span> a pack.</td><td>sheep : flock · musician : orchestra</td></tr>
+    <tr><td>Worker to tool</td><td>A surgeon <span class="key">uses</span> a scalpel.</td><td>painter : brush · carpenter : saw</td></tr>
+    <tr><td>Worker to product</td><td>A cartographer <span class="key">makes</span> maps.</td><td>lexicographer : dictionary · baker : bread</td></tr>
+    <tr><td>Tool to purpose</td><td>A thermometer <span class="key">is used to</span> measure temperature.</td><td>scissors : cut · broom : sweep</td></tr>
+    <tr><td>Place / home</td><td>Bees <span class="key">are kept in</span> an apiary.</td><td>bird : aviary · bear : den</td></tr>
+    <tr><td>Cause and effect</td><td>A drought <span class="key">causes</span> famine.</td><td>virus : illness · joke : laughter</td></tr>
+    <tr><td>Sequence</td><td>A rehearsal <span class="key">comes before</span> a performance.</td><td>draft : essay · dawn : noon</td></tr>
+    <tr><td>Characteristic</td><td>Ice <span class="key">is always</span> cold.</td><td>sugar : sweet · cacophony : harsh</td></tr>
+    <tr><td>Lacks</td><td>Something arid <span class="key">lacks</span> moisture.</td><td>anonymous : name · dark : light</td></tr>
+    <tr><td>Symbol</td><td>A dove <span class="key">is a symbol of</span> peace.</td><td>flag : country · crown : royalty</td></tr>
+  </table></div>
+
+  <h2 class="part">Redo your 9 misses</h2>
+  <p class="dir">For each one: first pick the more precise sentence, then use it to choose the answer. Your original answer is shown so you can see how the precise sentence rules it out.</p>
+  <div id="walk"></div>
+
+  <h2 class="part">Checklist for every analogy</h2>
+  <div class="lesson"><ol class="check">
+    <li><b>Define the first word.</b> If you don’t know it, use roots (pusill- = tiny, im- = not, dur- = hard) and the second word as clues.</li>
+    <li><b>Make a precise sentence.</b> Ask: does it, does it NOT, too much, can it, start or end, a young version, what is left?</li>
+    <li><b>Keep the order.</b> The first word of each choice goes where the first word of the stem went. Don’t flip the pair.</li>
+    <li><b>Test all five choices</b>, even after one seems right.</li>
+    <li><b>Two choices fit? Tighten the sentence</b> until only one works.</li>
+    <li><b>Still stuck?</b> Make a sentence for each choice. A choice with no clear relationship is out.</li>
+  </ol></div>`;
+  const w=h.querySelector("#walk");
+  WALK.forEach((it,i)=>{
+    const st=S.walk[i]||(S.walk[i]={});
+    const c=document.createElement("div"); c.className="q"; w.appendChild(c);
+    function paint(){
+      c.innerHTML=`<div class="qhead"><span class="num">#${it.n}</span><div class="stem">${esc(it.s)} as</div></div>
+      <div class="indent"><div class="was">On the test you chose ${esc(it.was)}.</div>
+      <div class="step">Step 1 · Which sentence is more precise?</div>
+      ${it.sents.map((t,k)=>`<button class="sentopt ${st.s!=null&&k===it.g?"right":""} ${st.s===k&&k!==it.g?"wrong":""}" data-k="${k}">“${esc(t)}”</button>`).join("")}
+      ${st.s!=null&&st.s!==it.g?`<div class="expl"><strong>Too vague.</strong> That sentence could fit several choices. Use the precise one.</div>`:""}
+      ${st.s!=null?`<div class="step">Step 2 · Use “${esc(it.sents[it.g])}” to choose</div>
+      <div class="opts ${st.a!=null?"done":""}">${it.o.map((o,k)=>`<button class="opt ${st.a!=null&&k===it.a?"right":""} ${st.a===k&&k!==it.a?"wrong":""}" data-a="${k}"><span class="l">${L[k]}</span><span>${esc(o)}</span></button>`).join("")}</div>
+      ${st.a!=null?`<div class="expl"><strong>${st.a===it.a?"Correct.":"Not quite. The answer is "+L[it.a]+"."}</strong> ${esc(it.e)}</div>`:""}`:""}</div>`;
+      c.querySelectorAll(".sentopt").forEach(b=>b.onclick=()=>{if(st.s!=null)return; st.s=+b.dataset.k; save(); paint();});
+      c.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{if(st.a!=null)return; st.a=+b.dataset.a; save(); paint();});
+    }
+    paint();
+  });
+  const rb=document.createElement("button"); rb.className="btn warn"; rb.textContent="Reset the 9 redos"; rb.style.marginTop="4px";
+  let armed=false; rb.onclick=()=>{if(!armed){armed=true;rb.textContent="Click again to reset";setTimeout(()=>{armed=false;rb.textContent="Reset the 9 redos"},3000);return} S.walk={};save();renderMethod();};
+  w.appendChild(rb);
+}
+
+function renderAna(){
+  const h=document.getElementById("sec-ana"); h.innerHTML="";
+  h.insertAdjacentHTML("beforeend",`<h2 class="part">Analogy Practice · 25 new questions</h2>
+   <p class="dir">Use the checklist from the Analogy Method tab. Cover the choices with your hand, write your sentence in the box, then choose. Your sentences are saved and copied into your results so your tutor can see them.</p>`);
+  const box=document.createElement("div"); h.appendChild(box);
+  mcSet(box,"ana",ANA,{sentKey:"ana",rebuild:renderAna});
+}
+
+function renderRead(){
+  const h=document.getElementById("sec-read"); h.innerHTML="";
+  h.insertAdjacentHTML("beforeend",`<p class="dir" style="margin-top:16px">Read each passage, then answer its questions. Watch especially for questions about <b>why</b> the author uses a word or comparison: the answer is usually about the author’s purpose or tone, not the literal meaning.</p>`);
+  READING.forEach(g=>{
+    h.insertAdjacentHTML("beforeend",`<h2 class="part">${g.label}</h2>`);
+    const grp=document.createElement("div"); grp.className="pgroup";
+    grp.innerHTML=`<article class="passage${g.poem?" poem":""}" tabindex="0"><div class="src">${g.label}</div>${g.passage.map(p=>`<p>${p}</p>`).join("")}</article><div class="qs"></div>`;
+    h.appendChild(grp);
+    mcSet(grp.querySelector(".qs"),g.key,g.items,{rebuild:renderRead});
+  });
+}
+
+/* ---------- export ---------- */
+function buildReport(){
+  const d=new Date().toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"});
+  const T=["SSAT Review Room — Results",d,""], H=[`<h1>SSAT Review Room — Results</h1><p>${esc(d)}</p>`];
+  const sets=VOCAB.map(v=>({title:"Vocabulary "+v.title,key:v.key,items:v.items})).concat([{title:"Analogy Practice",key:"ana",items:ANA}]).concat(READING.map(g=>({title:"Reading "+g.label,key:g.key,items:g.items})));
+  sets.forEach(set=>{
+    const st=S.ans[set.key]||{}; let r=0,n=0; const miss=[];
+    set.items.forEach((it,i)=>{const p=st[i]; if(p==null)return; n++; if(p===it.a)r++; else miss.push(`#${i+1} ${it.w||it.s} — chose ${L[p]} (${it.o[p]}); answer ${L[it.a]} (${it.o[it.a]}).`)});
+    const line=`Score: ${r}/${set.items.length} correct (${n} answered).`;
+    T.push(set.title.toUpperCase(),line); H.push(`<h2>${esc(set.title)}</h2><p>${esc(line)}</p>`);
+    if(miss.length){T.push("Missed:",...miss.map(m=>"  "+m)); H.push("<p><b>Missed:</b></p><ul>"+miss.map(m=>`<li>${esc(m)}</li>`).join("")+"</ul>");}
+    else if(n){T.push("No questions missed."); H.push("<p>No questions missed.</p>");}
+    T.push("");
+  });
+  let wr=0,ws=0,wd=0; WALK.forEach((it,i)=>{const st=S.walk[i]||{}; if(st.a!=null){wd++; if(st.a===it.a)wr++;} if(st.s===it.g)ws++;});
+  const wl=`Redid ${wd} of 9 missed analogies: ${wr} correct. Chose the precise sentence first time on ${ws} of 9.`;
+  T.push("ANALOGY METHOD · REDO OF TEST MISSES",wl,""); H.push(`<h2>Analogy Method · Redo of test misses</h2><p>${esc(wl)}</p>`);
+  const ss=S.sent.ana||{}; const lines=ANA.map((it,i)=>ss[i]&&ss[i].trim()?`#${i+1} ${it.s.replace(/ as$/,"")}: “${ss[i].trim()}”`:null).filter(Boolean);
+  T.push("ANALOGY SENTENCES WRITTEN"); H.push("<h2>Analogy sentences written</h2>");
+  if(lines.length){T.push(...lines.map(l=>"  "+l)); H.push("<ul>"+lines.map(l=>`<li>${esc(l)}</li>`).join("")+"</ul>");}
+  else {T.push("  (none written)"); H.push("<p>(none written)</p>");}
+  return {text:T.join("\n"),html:H.join("")};
+}
+document.getElementById("export").onclick=async()=>{
+  const r=buildReport(), msg=document.getElementById("export-msg"), fb=document.getElementById("export-fallback");
+  try{
+    if(window.ClipboardItem) await navigator.clipboard.write([new ClipboardItem({"text/html":new Blob([r.html],{type:"text/html"}),"text/plain":new Blob([r.text],{type:"text/plain"})})]);
+    else await navigator.clipboard.writeText(r.text);
+    fb.hidden=true; msg.textContent="Copied. Open a Google Doc and paste (Ctrl+V or Cmd+V).";
+  }catch(e){
+    try{await navigator.clipboard.writeText(r.text);fb.hidden=true;msg.textContent="Copied as plain text. Paste it into a Google Doc.";}
+    catch(e2){const t=document.getElementById("export-text");t.value=r.text;fb.hidden=false;t.focus();t.select();msg.textContent="Copying was blocked. Use the box below.";}
+  }
+};
+
+/* ---------- tabs ---------- */
+function show(sec){S.tab=sec;save();
+  document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.sec===sec));
+  document.querySelectorAll("section[data-sec]").forEach(s=>s.hidden=s.dataset.sec!==sec);
+  window.scrollTo(0,0);}
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>show(t.dataset.sec));
+renderBank(); renderVocab(); renderMethod(); renderAna(); renderRead();
+show(["bank","vocab","method","ana","read"].includes(S.tab)?S.tab:"bank");
+</script>
+</body></html>
